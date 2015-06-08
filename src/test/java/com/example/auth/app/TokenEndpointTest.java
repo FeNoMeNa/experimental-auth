@@ -19,6 +19,7 @@ import java.util.Date;
 
 import static com.example.auth.app.ReplyMatchers.containsValue;
 import static com.example.auth.app.ReplyMatchers.isOk;
+import static com.example.auth.app.RequestBuilder.newRequest;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -43,11 +44,9 @@ public class TokenEndpointTest {
     final TokenRequest tokenRequest = new TokenRequest("grant_type", "code", "refresh_token", "client_id", "client_secret");
     final Token token = new Token("token_value", "token_type", "refresh_token_value", "userId", 0l, new Date());
     final TokenDTO tokenDTO = new TokenDTO("token_value", "refresh_value", "token_type", 0l);
-    final Request request = new ParameterRequest(ImmutableMap.of("grant_type", "grant_type", "code", "code", "client_id", "client_id", "client_secret", "client_secret", "refresh_token", "refresh_token"));
-
+    final Request request = newRequest().auth("client_id", "client_secret").withParameters(ImmutableMap.of("grant_type", "grant_type", "code", "code", "refresh_token", "refresh_token")).build();
 
     context.checking(new Expectations() {{
-
       oneOf(tokenCreator).create(new ProvidedAuthorizationCode(tokenRequest.code, tokenRequest.clientId, tokenRequest.clientSecret));
       will(returnValue(token));
     }});
@@ -61,13 +60,11 @@ public class TokenEndpointTest {
   @Test
   public void generatingTokenUsingRefreshToken() throws Exception {
     final TokenRequest tokenRequest = new TokenRequest("refresh_token", "code", "refresh_token_value", "client_id", "client_secret");
-    final Token token = new Token("token_value", "token_type", "referesh_token_value", "userId", 0l, new Date());
+    final Token token = new Token("token_value", "token_type", "refresh_token_value", "userId", 0l, new Date());
     final TokenDTO tokenDTO = new TokenDTO("token_value", "refresh_value", "token_type", 0l);
-    final Request request = new ParameterRequest(ImmutableMap.of("grant_type", "refresh_token", "code", "code", "client_id", "client_id", "client_secret", "client_secret", "refresh_token", "refresh_token_value"));
-
+    final Request request = newRequest().auth("client_id", "client_secret").withParameters(ImmutableMap.of("grant_type", "refresh_token", "code", "code", "refresh_token", "refresh_token_value")).build();
 
     context.checking(new Expectations() {{
-
       oneOf(tokenCreator).create(new ProvidedRefreshToken(tokenRequest.refreshToken, tokenRequest.clientId, tokenRequest.clientSecret));
       will(returnValue(token));
     }});
@@ -77,38 +74,4 @@ public class TokenEndpointTest {
     assertThat(reply, isOk());
     assertThat(reply, containsValue(tokenDTO));
   }
-
-//  @Test
-//  public void errorResponse() throws Exception {
-//    final TokenRequest tokenRequest = new TokenRequest("auth_code", "1234", "refreshToken", "client123", "secret123");
-//    final Request request = new ParameterRequest(ImmutableMap.of("grant_type", "auth_code", "code", "1234", "client_id", "client123", "client_secret", "secret123"));
-//    final ErrorResponseDTO errorResponse = new ErrorResponseDTO("invalid_grant", "The username or password is incorrect!");
-//
-//    context.checking(new Expectations() {{
-//      oneOf(tokenSecurity).validateAuthCode(tokenRequest);
-//      will(throwException(new TokenErrorResponse("invalid_grant", "The username or password is incorrect!")));
-//    }});
-//
-//    Reply<?> reply = endpoint.generate(request);
-//
-//    assertThat(reply, isBadRequest());
-//    assertThat(reply, containsValue(errorResponse));
-//  }
-
-//  @Test
-//  public void errorResponseWhenValidatingRefreshToken() throws Exception {
-//    final TokenRequest tokenRequest = new TokenRequest("refresh_token", "1234", "refreshToken", "client123", "secret123");
-//    final Request request = new ParameterRequest(ImmutableMap.of("grant_type", "refresh_token", "code", "1234", "client_id", "client123", "client_secret", "secret123"));
-//    final ErrorResponseDTO errorResponse = new ErrorResponseDTO("invalid_grant", "Erooooor");
-//
-//    context.checking(new Expectations() {{
-//      oneOf(tokenSecurity).validateRefreshToken(tokenRequest);
-//      will(throwException(new TokenErrorResponse("invalid_grant", "Erooooor")));
-//    }});
-//
-//    Reply<?> reply = endpoint.generate(request);
-//
-//    assertThat(reply, isBadRequest());
-//    assertThat(reply, containsValue(errorResponse));
-//  }
 }

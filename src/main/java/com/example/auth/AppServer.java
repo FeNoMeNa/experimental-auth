@@ -1,6 +1,6 @@
 package com.example.auth;
 
-import com.example.auth.app.OauthAuthorizationServerModule;
+import com.example.auth.app.OAuthAuthorizationServerModule;
 import com.example.auth.memory.InMemoryModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -33,7 +33,7 @@ public class AppServer {
     context.addEventListener(new GuiceServletContextListener() {
       @Override
       protected Injector getInjector() {
-        return Guice.createInjector(new OauthAuthorizationServerModule("", 60 * 60l), new InMemoryModule());
+        return Guice.createInjector(new OAuthAuthorizationServerModule("", 60 * 60l), new InMemoryModule());
       }
     });
 
