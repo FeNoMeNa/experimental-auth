@@ -42,9 +42,10 @@ public class AuthorizationEndpoint {
   private AuthorizationRequest read(HttpServletRequest request) {
     String responseType = request.getParameter("response_type");
     String clientId = request.getParameter("client_id");
+    String currentPage = request.getParameter("state");
     String sessionId = getCookieValue(request, "SID");
 
-    return new AuthorizationRequest(responseType, clientId, sessionId);
+    return new AuthorizationRequest(responseType, clientId, currentPage, sessionId);
   }
 
   /**

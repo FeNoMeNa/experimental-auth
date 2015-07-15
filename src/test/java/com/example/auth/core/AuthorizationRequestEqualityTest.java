@@ -13,16 +13,16 @@ import static org.junit.Assert.assertThat;
 public class AuthorizationRequestEqualityTest {
   @Test
   public void areEqual() {
-    AuthorizationRequest authorizationRequest1 = new AuthorizationRequest("code", "123456", "sessionId");
-    AuthorizationRequest authorizationRequest2 = new AuthorizationRequest("code", "123456", "sessionId");
+    AuthorizationRequest authorizationRequest1 = new AuthorizationRequest("code", "123456", "currentPage", "sessionId");
+    AuthorizationRequest authorizationRequest2 = new AuthorizationRequest("code", "123456", "currentPage", "sessionId");
 
     assertThat(authorizationRequest1, is(authorizationRequest2));
   }
 
   @Test
   public void areNotEqual() {
-    AuthorizationRequest authorizationRequest1 = new AuthorizationRequest("code", "123456", "sessionId");
-    AuthorizationRequest authorizationRequest2 = new AuthorizationRequest("mode", "654321", "sessionId");
+    AuthorizationRequest authorizationRequest1 = new AuthorizationRequest("code", "123456", "currentPage", "sessionId");
+    AuthorizationRequest authorizationRequest2 = new AuthorizationRequest("mode", "654321", "currentPage", "sessionId");
 
     assertThat(authorizationRequest1, is(not(authorizationRequest2)));
   }

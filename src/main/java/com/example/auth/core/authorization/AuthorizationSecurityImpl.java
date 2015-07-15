@@ -43,6 +43,6 @@ public class AuthorizationSecurityImpl implements AuthorizationSecurity {
 
     clientAuthorizationRepository.register(new Authorization(request.responseType, request.clientId, code, redirectURI, userId));
 
-    return new AuthorizationResponse(code, redirectURI);
+    return new AuthorizationResponse(code, request.currentPage, redirectURI);
   }
 }

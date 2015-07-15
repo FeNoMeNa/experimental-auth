@@ -41,14 +41,19 @@ public class ClientAuthorizationEndpointTest {
   @Test
   public void happyPath() throws Exception {
 //    final Request request = makeRequestWithParameters(ImmutableMap.of("response_type", "code", "client_id", "123456"));
-    final AuthorizationRequest authorizationRequest = new AuthorizationRequest("code", "123456", "xxxyyyzzz");
-    final AuthorizationResponse authorizationResponse = new AuthorizationResponse("54321", "http://abv.bg/");
+    final AuthorizationRequest authorizationRequest = new AuthorizationRequest("code", "123456", "currentPage", "xxxyyyzzz");
+    final AuthorizationResponse authorizationResponse = new AuthorizationResponse("54321", "currentPage", "http://abv.bg/");
 
     context.checking(new Expectations() {{
       oneOf(request).getParameter("response_type");
       will(returnValue("code"));
+
       oneOf(request).getParameter("client_id");
       will(returnValue("123456"));
+
+      oneOf(request).getParameter("state");
+      will(returnValue("currentPage"));
+
       oneOf(request).getCookies();
       will(returnValue(coockies));
 
@@ -57,23 +62,26 @@ public class ClientAuthorizationEndpointTest {
     }});
 
     Reply<?> reply = endpoint.authorize(request);
-    MatcherAssert.assertThat(reply, ReplyMatchers.redirectUriIs("http://abv.bg/?code=54321"));
+    MatcherAssert.assertThat(reply, ReplyMatchers.redirectUriIs("http://abv.bg/?code=54321&state=currentPage"));
   }
 
   @Test
   public void onAuthorizationError() throws Exception {
 //    final Request request = makeRequestWithParameters(ImmutableMap.of("response_type", "code", "client_id", "654321"));
-    final AuthorizationRequest authorizationRequest = new AuthorizationRequest("code", "654321", "xxxyyyzzz");
+    final AuthorizationRequest authorizationRequest = new AuthorizationRequest("code", "654321", "currentPage", "xxxyyyzzz");
 
     context.checking(new Expectations() {{
-
       oneOf(request).getParameter("response_type");
       will(returnValue("code"));
+
       oneOf(request).getParameter("client_id");
       will(returnValue("654321"));
+
+      oneOf(request).getParameter("state");
+      will(returnValue("currentPage"));
+
       oneOf(request).getCookies();
       will(returnValue(coockies));
-
 
       oneOf(authorizationSecurity).auth(authorizationRequest);
       will(throwException(new AuthorizationErrorResponse("Error messageeeeee!")));

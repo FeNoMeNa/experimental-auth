@@ -36,7 +36,7 @@ public class ClientAuthorizationSecurityTest {
 
   @Test
   public void happyPath() throws Exception {
-    final AuthorizationRequest request = new AuthorizationRequest("code", "id", "sessionId");
+    final AuthorizationRequest request = new AuthorizationRequest("code", "id", "currentPage", "sessionId");
     final Client client = new Client("id", "secret", "name", "url", "description", "redirectURI");
     final Authorization authorization = new Authorization("code", "id", "token", "redirectURI", "userId");
 
@@ -58,7 +58,7 @@ public class ClientAuthorizationSecurityTest {
 
   @Test(expected = AuthorizationErrorResponse.class)
   public void notExistingClient() throws Exception {
-    final AuthorizationRequest request = new AuthorizationRequest("code", "id1", "sessionId");
+    final AuthorizationRequest request = new AuthorizationRequest("code", "id1", "currentPage", "sessionId");
 
     context.checking(new Expectations() {{
       oneOf(clientFinder).findById("id1");
